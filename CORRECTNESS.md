@@ -22,6 +22,8 @@ Normal build, from `Java Source/java source`:
 
 ```sh
 mvn test package
+cp target/fxMR-0.3.45-jar-with-dependencies.jar ../../STACMR-R/java/
+cp target/fxMR-0.3.45-jar-with-dependencies.jar ../../STACMR-matlab/java/
 ```
 
 When Maven downloads are unavailable, the dependency JAR from the original
