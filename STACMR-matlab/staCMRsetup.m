@@ -7,9 +7,9 @@ bookinfo = 'Dunn, J. C. & Kalish, M. L. (2018). State-Trace Analysis. Springer.'
 fprintf('STACMR program library Version 26.03.2020\n');
 fprintf (['Utility programs for use with the book:\n', bookinfo, '\n\n'])
 
+currdir = pwd;
 if nargin==0
-    currdir = pwd;
-    pathstr = fileparts(which('/staCMRsetup.m')); eval(['cd ''', pathstr,'''']); % go to STACMR folder
+    pathstr = fileparts(mfilename('fullpath')); eval(['cd ''', pathstr,'''']); % go to STACMR folder
     cd ('java');  % change directory
     files=dir('fxMR-*.jar');
     versions=zeros(size(files, 1),3);
@@ -29,4 +29,5 @@ disp(['STACMR linked to java library ', filename])
 %which(filename);
 javaclasspath (which(filename));
 eval(['cd ''', currdir,'''']); % return to working directory
+
 

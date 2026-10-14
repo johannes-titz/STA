@@ -23,7 +23,7 @@ Normal build, from `Java Source/java source`:
 ```sh
 mvn test package
 cp target/fxMR-0.3.45-jar-with-dependencies.jar ../../STACMR-R/java/
-cp target/fxMR-0.3.45-jar-with-dependencies.jar ../../STACMR-matlab/java/
+cp target/fxMR-0.3.45-jar-with-dependencies.jar ../../STACMR-matlab/java/fxMR-0.3.45.jar
 ```
 
 When Maven downloads are unavailable, the dependency JAR from the original
@@ -39,5 +39,8 @@ or a run of every historical simulation test. From `STACMR-R`, run
 `Rscript tests/test-correctness.R` to check the standalone R interface.
 
 The rebuilt JAR has version 0.3.45 and is selected by the original R setup
-script. Original notices and authorship are preserved. This file does not add
+script. Its MATLAB copy uses the original `fxMR-X.X.X.jar` naming convention.
+The matching MATLAB likelihood boundary and setup-path corrections are included,
+but a MATLAB/Octave runtime was not available for their execution here.
+Original notices and authorship are preserved. This file does not add
 or infer a new license grant. No new issue or PR is submitted upstream.

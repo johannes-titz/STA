@@ -16,7 +16,7 @@ if nargin < 2, model=[]; end
 
 
 nvar = numel(y); if isempty(model), model=ones(nvar,1); end % default model
-ncond = numel(y{1});
+ncond = numel(y{1}.means);
 % convert E to simpleConstraint objects
 if iscell(E)
     if ~isempty(E)
@@ -39,7 +39,7 @@ if iscell(E)
         end
     end
 else
-    if ndims(E)==1
+    if ndims(E)==2
         %2D matrix (repeat nvar times)
         p.addAdj(E);
         p.dupeAdj(nvar);
