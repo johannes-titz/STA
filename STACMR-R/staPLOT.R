@@ -6,7 +6,7 @@ staPLOT <- function (data, vars=c(1,2), groups=NULL, grouplabels=NULL, axislabel
   # generates state-trace plot
 # get stats from data (depending on its form)
 shrink = -1;
-if (is(data,"data.frame")) {
+if (is.data.frame(data) || is.matrix(data)) {
   y = gen2list (data) # convert from general format
   ys = staSTATS (y, shrink) # get stats
 } 
@@ -17,6 +17,7 @@ if (is(data,"list")) {
 
 nvar = length(ys)
 if (is.null(groups)) {g = rep(1,length(ys[[1]]$means))}
+if (!is.null(groups) && !is.list(groups)) {g=as.integer(groups)}
 if (is.list(groups)) # convert list to vector of group id's
   {g=rep(1,length(ys[[1]]$means)); k=0;
   for (i in 1:length(groups)) {

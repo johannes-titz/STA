@@ -44,7 +44,7 @@ staMRFIT <- function (data=NULL, partial = list(), nsample=1, shrink=-1) {
   a = vector("list", nvar)
   z = aperm(z,c(3,2,1))
   for (ivar in 1:nvar){
-    a[[ivar]] = z[,,ivar]
+    a[[ivar]] = matrix(z[,,ivar],nrow=nsample,ncol=ncond)
   }
   output$pars = a;
   

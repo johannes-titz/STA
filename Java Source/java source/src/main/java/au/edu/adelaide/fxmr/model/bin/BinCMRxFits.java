@@ -48,6 +48,7 @@ public class BinCMRxFits {
 
 	public BinCMRxFits(int nSample, BinBaseProblem problem, int proc, boolean approximate, boolean showStatus,
 			long seed) {
+		showStatus = showStatus && !java.awt.GraphicsEnvironment.isHeadless();
 		if (showStatus) {
 			sf = new StatusFrame("BinCMRxFits", running);
 			sf.updateStatus("Init...");
@@ -274,3 +275,4 @@ public class BinCMRxFits {
 		return xStars;
 	}
 }
+

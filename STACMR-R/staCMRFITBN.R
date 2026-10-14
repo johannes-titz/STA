@@ -1,4 +1,4 @@
-staCMRFITBN <- function (data=NULL, partial = list(), nsample=1, approx=F) {
+staCMRFITBN <- function (data=NULL, partial = list(), nsample=1, approx=F, proc=-1, seed=-1) {
   # input:
   # nsample = no. of Monte Carlo samples (about 10000 is good)
   # data = data structure (cell array or general)
@@ -20,14 +20,11 @@ staCMRFITBN <- function (data=NULL, partial = list(), nsample=1, approx=F) {
   # bootstrap parameter estimates added 24 March 2020
   # *************************************************************************
   
-  proc=-1
-  seed=-1
   if (is(data,"data.frame")) {
     y = gen2listBN (data) # convert from general format to list format
   } else {y = data} 
   
-  a = "means" %in% variable.names(as.data.frame(y))
-  if (!a) {y = binSTATS(y)}
+  y = binSTATS(y)
   
   tol <- 10e-6
   if (missing(partial)) {partial = list()}
@@ -61,7 +58,7 @@ staCMRFITBN <- function (data=NULL, partial = list(), nsample=1, approx=F) {
   for (igroup in 1:ngroup){
     temp = vector("list", nvar)
     for (ivar in 1:nvar){
-      temp[[ivar]] = z[,,igroup,ivar]
+      temp[[ivar]] = matrix(z[,,igroup,ivar],nrow=nsample,ncol=ncond)
     }
     a[[igroup]] = temp;
   }

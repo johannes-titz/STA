@@ -25,9 +25,9 @@ gen2list = function (data=NULL, varnames=list()) {
   for (igroup in 1:ngroup) {
     for (ivar in 1:nvar){
       k = which(group==ugroup[igroup] & var==uvar[ivar])
-      a = as.matrix(within[k,])
+      a = within[k,,drop=FALSE]
       # delete any variables that all all missing
-      n = colSums(is.na(a)); k=which(n==nrow(a)); if (length(k) > 0) {a = a[,-k]}
+      n = colSums(is.na(a)); k=which(n==nrow(a)); if (length(k) > 0) {a = a[,-k,drop=FALSE]}
       # store in 2D list
       y[[igroup]][[ivar]]=a
     }

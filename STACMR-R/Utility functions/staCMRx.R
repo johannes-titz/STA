@@ -45,26 +45,31 @@ staCMRx <- function (data, model=NULL, E = list(), shrink=-1, tolerance=0, proc=
   # decompose model if there are null rows to short circuit result
   s = rowSums(abs(model)); i = which(s != 0); nnonzero = length(i)
   xx = vector("list", nnonzero); fval = 0
-  if (qr(model[i,])$rank==nnonzero){
-    for (k in 1:nnonzero) {xx[[k]] = matrix(y[[i[k]]]$means,length(y[[i[k]]]$means),1)}
+  if (qr(model[i,,drop=FALSE])$rank==nnonzero){
+    for (k in seq_len(nnonzero)) {
+      orders = if (length(E) && is.list(E[[1]])) E[[i[k]]] else E
+      out = jMR(y[[i[k]]]$means, y[[i[k]]]$weights, orders)
+      xx[[k]] = matrix(out$x,length(y[[i[k]]]$means),1)
+      fval = fval + out$fval
+    }
   } else {
-    out = jCMRx (y[i], model[i,], E) # call jCMRx for non-zero rows of model
+    out = jCMRx (y[i], model[i,,drop=FALSE], E) # call jCMRx for non-zero rows of model
     fval = out$fval; 
-    for (k in 1:nnonzero) {xx[[k]] = matrix(out$x[,k],nrow(out$x),1)}
+    for (k in seq_len(nnonzero)) {xx[[k]] = matrix(out$x[,k],nrow(out$x),1)}
   }
   
   # reassemble output
   x = vector("list", nvar); 
-  for (k in 1:nnonzero) {x[[i[k]]] = xx[[k]]}
+  for (k in seq_len(nnonzero)) {x[[i[k]]] = xx[[k]]}
   
   # replace zero model rows with weighted means
   j = which(s == 0) 
   nzero = length(j)
   if (nzero > 0) {
-    for (k in 1:nzero) {
+    for (k in seq_len(nzero)) {
       u = j[k]
       w = y[[u]]$weights
-      if (is.matrix(w)) {w = diag(w)}
+      if (is.matrix(w)) {w = colSums(w)}
       w = matrix(w/sum(w),length(w),1)
       z = y[[u]]$means%*%w
       a = rep(z,length(y[[u]]$means))

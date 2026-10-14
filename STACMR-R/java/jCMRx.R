@@ -1,4 +1,4 @@
-jCMRx <- function(d, model, E) {
+jCMRx <- function(d, model, E, approximate = FALSE, proc = -1) {
   nVar <- length(d)
   nCond <- length(d[[1]]$means)
   
@@ -37,9 +37,15 @@ jCMRx <- function(d, model, E) {
     }
   }
   
-  cmrxSolver <- new(J("au.edu.adelaide.fxmr.model.ParCMRxSolver"))
   problem <- problemMaker$getProblem()
-  solution <- cmrxSolver$solve(problem)
+  if (approximate) {
+    cmrxSolver <- new(J("au.edu.adelaide.fxmr.model.CMRxSolver"))
+    cmrxSolver$setOnlyFeas(TRUE)
+    solution <- cmrxSolver$solve(problem)
+  } else {
+    cmrxSolver <- new(J("au.edu.adelaide.fxmr.model.ParCMRxSolver"))
+    solution <- cmrxSolver$solve(problem, FALSE, as.integer(proc))
+  }
   fVal <- .jcall(solution,"getFStar",returnSig = "D")
   xMatrix <- t(.jcall(solution,"getXStar",returnSig = "[[D",evalArray=TRUE,simplify = TRUE))
   

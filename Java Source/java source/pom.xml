@@ -4,21 +4,28 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fxMR</groupId>
 	<artifactId>fxMR</artifactId>
-	<version>0.3.44</version>
+	<version>0.3.45</version>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.2</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<argLine>-Djava.awt.headless=true</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.13.0</version>
+				<configuration>
+					<release>8</release>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.7.1</version>
 				<configuration>
 					<archive>
 						<manifest>

@@ -17,6 +17,19 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.TIntHashSet;
 
 public class CMRxSolver {
+	/** The common-order shortcut must also honor the supplied initial orders. */
+	public static boolean satisfiesInitialOrders(CMRxProblem problem) {
+		HashSet<SimpleLinearConstraint>[] adj = problem.getAdj();
+		if (adj == null)
+			return true;
+		double[][] means = problem.getMeans();
+		for (int v = 0; v < adj.length; v++)
+			if (adj[v] != null)
+				for (SimpleLinearConstraint edge : adj[v])
+					if (edge.value(means[v]) > 0)
+						return false;
+		return true;
+	}
 	/**
 	 * If a call to MR fails, abort!
 	 */
@@ -36,7 +49,7 @@ public class CMRxSolver {
 
 	public CMRSolution solve(CMRxProblem problem, boolean showWindow) {
 		SolverListener sl = null;
-		if (showWindow)
+		if (showWindow && !java.awt.GraphicsEnvironment.isHeadless())
 			sl = new StatusFrame();
 		return solve(problem, sl);
 	}
@@ -73,7 +86,7 @@ public class CMRxSolver {
 		HashSet<SimpleLinearConstraint>[] adjBar = null;
 		int cyclicAvoided = 0;
 
-		if (infeas == null) {
+		if (infeas == null && satisfiesInitialOrders(problem)) {
 			if (sl != null)
 				sl.setFinished();
 			return problem.createSolution(0, problem.getMeans(), iter,
@@ -386,9 +399,11 @@ public class CMRxSolver {
 		int[] tmpCVSet = new int[nvar];
 		int trialIndex = 0;
 
-		double[][] xPrime = problem.getMeans();
-
 		CMRxTrial curBest = new CMRxTrial(solver, problem.getAdj(), nvar, problem.getWeights(), problem.getMeans());
+		curBest.run();
+		double[][] xPrime = curBest.getxPrime();
+		if (xPrime == null)
+			return null;
 
 		int[] infeas = isFeasible3n(xPrime, infeasZones, tmpVolumes, tmpZoneNumbers);
 		while (infeas != null) {
@@ -463,9 +478,11 @@ public class CMRxSolver {
 		int[] tmpCVSet = new int[nvar];
 		int trialIndex = 0;
 
-		double[][] xPrime = problem.getMeans();
-
 		CMRxTrial curBest = new CMRxTrial(solver, problem.getAdj(), nvar, problem.getWeights(), problem.getMeans());
+		curBest.run();
+		double[][] xPrime = curBest.getxPrime();
+		if (xPrime == null)
+			return null;
 
 		TrialCache trialCache = new TrialCache(nvar);
 
@@ -664,3 +681,4 @@ public class CMRxSolver {
 		this.onlyFeas = onlyFeas;
 	}
 }
+

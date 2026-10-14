@@ -84,6 +84,7 @@ public class CMRxFits implements Fits {
 	 */
 	public CMRxFits(int nSample, CMRxFitsProblem problem, double shrink, int proc, boolean cheapP, boolean onlySTAMR,
 			double mrTol1, double mrTol2, boolean approximate, boolean reverse, long seed, boolean showStatus) {
+		showStatus = showStatus && !java.awt.GraphicsEnvironment.isHeadless();
 		this.problem = problem;
 		this.shrink = shrink;
 		this.cheapP = cheapP;
@@ -381,3 +382,4 @@ public class CMRxFits implements Fits {
 		return xStars;
 	}
 }
+

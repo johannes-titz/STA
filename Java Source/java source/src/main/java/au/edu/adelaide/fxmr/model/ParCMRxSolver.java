@@ -65,7 +65,7 @@ public class ParCMRxSolver {
 	}
 
 	public CMRSolution solve(CMRxProblem problem, boolean showWindow, int nThread) {
-		return solve(problem, showWindow ? new StatusFrame() : null, nThread);
+		return solve(problem, showWindow && !java.awt.GraphicsEnvironment.isHeadless() ? new StatusFrame() : null, nThread);
 	}
 
 	public CMRSolution solve(CMRxProblem problem, SolverListener sl, int nThread) {
@@ -92,7 +92,7 @@ public class ParCMRxSolver {
 		infeasZones = problem.getInfeasZones();
 		int[] infeas = CMRxSolver.isFeasible3n(problem.getMeans(), infeasZones, tmpVolumes, tmpZoneNumbers);
 
-		if (infeas == null)
+		if (infeas == null && CMRxSolver.satisfiesInitialOrders(problem))
 			return problem.createSolution(0, problem.getMeans(), iter, (double) (System.nanoTime() - start) / 1_000_000_000, adjBar, 0, 0);
 
 		remaining = new TreeSet<CMRxTrial>();
@@ -368,3 +368,4 @@ public class ParCMRxSolver {
 		this.mrTolerance2 = mrTolerance2;
 	}
 }
+

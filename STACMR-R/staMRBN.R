@@ -19,8 +19,7 @@ staMRBN = function (data=list(), partial=list()) {
   
   y = data
   if (is(data,"data.frame")) {y = gen2listBN(data)} # convert data frame to list of lists
-  a = "means" %in% variable.names(as.data.frame(y))
-  if (!a) {y = binSTATS(y)}
+  y = binSTATS(y)
 
   #y = binSTATS(data) # get summary stats
   
@@ -51,9 +50,6 @@ staMRBN = function (data=list(), partial=list()) {
 
 mleBN = function (x, count) {
   # calculates g.squared statistic
-  nn = sum(count)
-  x[which(x <= 0)] = .5/nn
-  x[which(x >= 1)] = (nn - .5)/nn
   n = rowSums (count)
   a = t(rbind(x, 1-x))*cbind(n, n)
   g2 = 2*count*log(count/a); g2[which(count <= 0)]=0;

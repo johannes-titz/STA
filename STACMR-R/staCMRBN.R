@@ -34,14 +34,11 @@ staCMRBN = function (data=list(), partial=list(), approx=FALSE) {
   #  }
   #}
   #g2 = as.matrix(rowSums(g), y$ngroup, y$nvar)
-  return(list(x=out$x, fval=out$f, g.squared=out$g.squared))
+  return(list(x=out$x, fval=out$fval, g.squared=out$g.squared))
 }
 
 mleBN = function (x, count) {
   # calculates g.squared statistic
-  nn = sum(count)
-  x[which(x <= 0)] = .5/nn
-  x[which(x >= 1)] = (nn - .5)/nn
   n = rowSums (count)
   a = t(rbind(x, 1-x))*cbind(n, n)
   g2 = 2*count*log(count/a); g2[which(count <= 0)]=0;

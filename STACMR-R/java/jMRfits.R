@@ -1,9 +1,9 @@
-jMRfits <- function(nsample, y, E=list(), shrink=-1, proc=-1) {
+jMRfits <- function(nsample, y, E=list(), shrink=-1, proc=-1, seed=-1) {
   if (is.data.frame(y)){
     problemMaker <- new(J("au.edu.adelaide.fxmr.model.CMRxFitsGMProblemMaker"))
     problemMaker$setShrink(shrink)
-    nVar <- length(unique(y[,2]))
-    nCond <- length(unique(y[,3])) * (ncol(y) - 3)
+    nVar <- length(unique(y[,3]))
+    nCond <- length(unique(y[,2])) * (ncol(y) - 3)
   }else{    
     if (!is.null(y[[1]][["means"]])){
       #Parametric case, probably passed in from staSTATS
@@ -13,8 +13,9 @@ jMRfits <- function(nsample, y, E=list(), shrink=-1, proc=-1) {
     }else{
       problemMaker <- new(J("au.edu.adelaide.fxmr.model.CMRxFitsGMProblemMaker"))
       problemMaker$setShrink(shrink)
-      nVar <- length(y)
-      nCond <- length(y[[1]])
+      nGroup <- length(y)
+      nVar <- length(y[[1]])
+      nCond <- ncol(y[[1]][[1]]) * nGroup
     }
   }
 
@@ -43,7 +44,8 @@ jMRfits <- function(nsample, y, E=list(), shrink=-1, proc=-1) {
   
   if (is.data.frame(y)){
     problemMaker$setGM(.jarray(as.matrix(y), dispatch=T));
-    sol <- problemMaker$solve(as.integer(nsample),as.integer(proc),FALSE,TRUE);
+    sol <- problemMaker$solve(as.integer(nsample), as.integer(proc), FALSE, TRUE,
+                             0, 0, FALSE, FALSE, .jlong(seed), FALSE)
   }else{
     if (!is.null(y[[1]][["means"]])){
       #Parametric case, probably passed in from staSTATS
@@ -65,16 +67,20 @@ jMRfits <- function(nsample, y, E=list(), shrink=-1, proc=-1) {
       problemMaker$setN(as.integer(ns))
       problem <- problemMaker$getProblem()
       
-      sol <- new(J("au.edu.adelaide.fxmr.model.CMRxFits"),as.integer(nsample),problem,shrink,as.integer(proc))
+      sol <- new(J("au.edu.adelaide.fxmr.model.CMRxFits"), as.integer(nsample),
+                 problem, shrink, as.integer(proc), FALSE, TRUE, 0, 0,
+                 FALSE, FALSE, .jlong(seed), FALSE)
     }else{
-      for (group in 1:nCond){
+      for (group in seq_len(nGroup)){
         for (iVar in 1:nVar){
-          problemMaker$addCell(as.integer(iVar),as.integer(group),.jarray(as.matrix(y[[iVar]][[group]]), dispatch = T))
+          problemMaker$addCell(as.integer(group),as.integer(iVar),.jarray(as.matrix(y[[group]][[iVar]]), dispatch = T))
         }
       }
-      sol <- problemMaker$solve(as.integer(nsample),as.integer(proc),FALSE,TRUE);
+      sol <- problemMaker$solve(as.integer(nsample), as.integer(proc), FALSE, TRUE,
+                               0, 0, FALSE, FALSE, .jlong(seed), FALSE)
     }
   }
-  
-  return(list(p = sol$getP(), fits = sol$getFits(),datafit = sol$getDataFit()))
+  pars = .jevalArray(sol$getXStars(),simplify=F)
+  return(list(p = sol$getP(), fits = sol$getFits(), datafit = sol$getDataFit(),
+              pars = pars))
 }

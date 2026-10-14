@@ -104,6 +104,7 @@ public class CMRxGMFits implements Fits {
 	private CMRxGMFits(int nSample, GeneralModel gm, double shrinkage, boolean autoShrink, DoubleMatrix2D model,
 			HashSet<SimpleLinearConstraint>[] adj, int proc, boolean cheapP, boolean onlySTAMR, double mrTolerance1,
 			double mrTolerance2, boolean approximate, boolean reverse, long seed, boolean showStatus) {
+		showStatus = showStatus && !java.awt.GraphicsEnvironment.isHeadless();
 		this.gm = gm;
 		this.model = model;
 		this.shrinkage = shrinkage;
@@ -414,3 +415,4 @@ public class CMRxGMFits implements Fits {
 		return xStars;
 	}
 }
+

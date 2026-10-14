@@ -1,7 +1,7 @@
 jCMRxBNfits <- function(nsample, data, E=list(), model=NULL, proc=-1, approximate=FALSE,seed=-1) {
   d <- data
   
-  if (with(d, exists('ngroup'))) {
+  if (!is.null(d$ngroup)) {
     nSubj = d$ngroup
     nVar = d$nvar
   } else {
@@ -18,7 +18,7 @@ jCMRxBNfits <- function(nsample, data, E=list(), model=NULL, proc=-1, approximat
     for (s in 1:nSubj){
       #Minus 1 to zero index
       dcur = d[[s]][[v]]
-      if (with(dcur, exists('count'))) {
+      if (is.list(dcur) && !is.null(dcur$count)) {
         df = as.data.frame(dcur$count, nrow=2)
       }else{
         df = as.data.frame(dcur, nrow=2)

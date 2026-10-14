@@ -12,6 +12,16 @@ shrinkDiag <- function(x, shrink) {
  
   if (!is.matrix(x)) {x = as.matrix(x)} 
   if (missing(shrink)) {shrink = -1}
+  if (ncol(x) == 1L) {
+    # Match the population covariance used below and by Java StatsSTA.
+    # Diagonal shrinkage cannot change a single variance.
+    values <- x[!is.na(x[, 1L]), 1L]
+    n <- length(values)
+    sigma <- matrix(if (n > 0L) sum((values - mean(values))^2) / n else 0,
+      1L, 1L, dimnames = if (is.null(colnames(x))) NULL else
+        list(colnames(x), colnames(x)))
+    return(list(sigma = sigma, shrinkage = 0))
+  }
   sigma = var(x); shrinkage=0;
   if (ncol(x) > 1) {
   # de-mean returns
@@ -48,4 +58,3 @@ shrinkDiag <- function(x, shrink) {
   
   return (list(sigma=sigma, shrinkage=shrinkage))
 }
-  

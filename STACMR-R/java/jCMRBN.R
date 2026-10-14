@@ -1,7 +1,7 @@
 jCMRBN <- function(data=list(), E=list(), model=NULL, approximate=FALSE) {
   d <- data
   
-  if (with(d, exists('ngroup'))) {
+  if (!is.null(d$ngroup)) {
     nSubj = d$ngroup
     nVar = d$nvar
   } else {
@@ -17,7 +17,7 @@ jCMRBN <- function(data=list(), E=list(), model=NULL, approximate=FALSE) {
   for (v in 1:nVar){
     for (s in 1:nSubj){
       dcur = d[[s]][[v]]
-      if (with(dcur, exists('count'))) {
+      if (is.list(dcur) && !is.null(dcur$count)) {
         df = as.data.frame(dcur$count, nrow=2)
       }else{
         df = as.data.frame(dcur, nrow=2)

@@ -77,17 +77,14 @@ public class BinTrial implements Comparable<BinTrial> {
 	}
 
 	public static double mleBN(BinElement binElement, double[] x) {
-		int nn = binElement.getNSum();
 		int n = x.length;
 		double sumG2 = 0;
 
 		for (int i = 0; i < n; i++) {
 			int curN = binElement.getN()[i];
 			double xv = x[i];
-			if (xv <= 0)
-				xv = 0.5 / nn;
-			else if (xv >= 1)
-				xv = (nn - 0.5) / nn;
+			// Terms with zero observed counts contribute zero. Keep the exact
+			// likelihood at p=0/1 instead of introducing artificial lack of fit.
 			double aHit = xv * curN;
 			double aMiss = (1.0 - xv) * curN;
 
@@ -271,3 +268,4 @@ public class BinTrial implements Comparable<BinTrial> {
 		return true;
 	}
 }
+
