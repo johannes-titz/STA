@@ -69,4 +69,19 @@ public class InitialOrderTests {
         assertEquals(0, solution.getFStar(), 0);
         assertArrayEquals(new double[]{2,1}, solution.getXStar()[0], 0);
     }
+    @Test public void zeroModelRowUsesFullDenseGLS() {
+        DoubleMatrix2D[] w = {
+            new DenseDoubleMatrix2D(new double[][]{{4,1},{1,2}}),
+            new DenseDoubleMatrix2D(new double[][]{{1,0},{0,1}})
+        };
+        CMRxProblem p = new CMRxProblem(new double[][]{{2,5},{1,2}}, w, null,
+            new DenseDoubleMatrix2D(new double[][]{{0},{1}}));
+        CMRSolution[] solutions = {new CMRxSolver().solve(p),
+            new ParCMRxSolver().solve(p, false, 2)};
+        for (CMRSolution solution : solutions) {
+            assertEquals(7.875, solution.getFStar(), 1e-8);
+            assertArrayEquals(new double[]{3.125,3.125}, solution.getXStar()[0], 1e-8);
+            assertArrayEquals(new double[]{1,2}, solution.getXStar()[1], 1e-8);
+        }
+    }
 }

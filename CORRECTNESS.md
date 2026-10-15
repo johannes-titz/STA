@@ -8,7 +8,8 @@ Changes:
 - Honor initial order constraints before serial/parallel zero-fit CMR returns.
 - Fit the MR root in both greedy initializers, including approximate fits.
 - Honor initial constraints in the R full-rank model shortcut and use full
-  matrix weights for constant outcome rows.
+  matrix weights for constant outcome rows in R and Java. The Java zero-row
+  shortcut now uses the GLS constant and the same full quadratic objective.
 - Use population variance for single-condition R cells, matching Java.
 - Return MR bootstrap parameter estimates, correct raw-list/general indexing,
   and select the MR solver for parametric MR bootstrap.
@@ -33,7 +34,7 @@ distribution can support compilation and a selected regression suite:
 python3 "Java Source/build-offline.py" /path/to/original-fxMR-fat.jar
 ```
 
-That command compiles the source and runs 65 tests, including the new
+That command compiles the source and runs 66 tests, including the new
 initial-order and boundary-likelihood cases. It is not a complete Maven build
 or a run of every historical simulation test. From `STACMR-R`, run
 `Rscript tests/test-correctness.R` to check the standalone R interface.

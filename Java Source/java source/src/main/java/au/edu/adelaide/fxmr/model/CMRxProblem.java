@@ -153,18 +153,21 @@ public class CMRxProblem {
 				fAddWeightedMeans = 0;
 				for (int r = 0; r < nNull; r++) {
 					int row = nullRows[r];
-					DoubleMatrix1D w = DoubleFactory2D.dense.diagonal(weights[row]);
+					// A constant under dense weights requires full generalized least squares.
+					DoubleMatrix2D w = weights[row];
 					double[] m = means[row];
-					double z = 0;
+					double numerator = 0, denominator = 0;
 					for (int i = 0; i < nCond; i++)
-						z += m[i] * w.getQuick(i);
-					z /= w.zSum();
+						for (int j = 0; j < nCond; j++) {
+							double wij = w.getQuick(i, j);
+							numerator += wij * m[j];
+							denominator += wij;
+						}
+					double z = numerator / denominator;
 					weightedMeans[r] = z;
-
-					for (int i = 0; i < nCond; i++) {
-						double d = m[i] - z;
-						fAddWeightedMeans += d * w.getQuick(i) * d;
-					}
+					for (int i = 0; i < nCond; i++)
+						for (int j = 0; j < nCond; j++)
+							fAddWeightedMeans += (m[i] - z) * w.getQuick(i, j) * (m[j] - z);
 				}
 
 				// As far as CMRxSolver is concerned, nVar is smaller
@@ -399,3 +402,4 @@ public class CMRxProblem {
 		return fAddWeightedMeans;
 	}
 }
+
